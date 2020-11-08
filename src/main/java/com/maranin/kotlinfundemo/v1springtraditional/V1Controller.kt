@@ -7,7 +7,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
-@RestController
+@RestController()
+@RequestMapping("/v1")
 class V1Controller(var effortRecorder: V1EffortRecorder) {
 
     private val logger: Logger = LoggerFactory.getLogger(V1Controller::class.java)
@@ -25,7 +26,7 @@ class V1Controller(var effortRecorder: V1EffortRecorder) {
     /**
      * Indicates amount to invoice for a given day
      */
-    @GetMapping("/invoice/{date}")
+    @GetMapping("/invoices/{date}")
     fun getInvoiceForDay(@PathVariable(value = "date") dateString: String): Any {
         // Note the return type is not precise because of the possible error case
         // Note exceptions are handled by try / catch clauses

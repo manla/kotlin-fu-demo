@@ -17,6 +17,7 @@
 	<properties>
 		<java.version>8</java.version>
 		<kotlin.version>1.4.20-RC</kotlin.version>
+		<strikt.version>0.28.0</strikt.version>
 	</properties>
 
 	<dependencies>
@@ -78,6 +79,12 @@
 			<version>${kotlin.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.strikt</groupId>
+			<artifactId>strikt-core</artifactId>
+			<version>${strikt.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -132,5 +139,12 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>jcenter</id>
+			<url>https://jcenter.bintray.com/</url>
+		</repository>
+	</repositories>
 
 </project>

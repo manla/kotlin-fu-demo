@@ -1,5 +1,5 @@
 ### Record the efforts for a given day
-POST http://localhost:8080/efforts/2020-11-07?hours=7
+POST http://localhost:8080/v1/efforts/2020-11-07?hours=7
 
 ### Retrieve the amount to invoice for a given day
-GET http://localhost:8080/invoice/2020-11-07
+GET http://localhost:8080/v1/invoices/2020-11-07
