@@ -1,5 +1,6 @@
 package com.maranin.kotlinfundemo.v1springtraditional
 
+import com.maranin.kotlinfundemo.shared.EffortRecorder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -11,6 +12,7 @@ import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFailure
+import strikt.assertions.isNull
 import java.lang.RuntimeException
 import java.time.LocalDate
 
@@ -18,7 +20,10 @@ import java.time.LocalDate
 internal class V1EffortRecorderTest {
 
     @Autowired
-    lateinit var effortRecorder: V1EffortRecorder
+    lateinit var effortRecorder: EffortRecorder
+
+    @Autowired
+    lateinit var invoiceCalculator: V1InvoiceCalculator
 
     private val date = LocalDate.of(2020, 11, 8)
 
@@ -33,7 +38,7 @@ internal class V1EffortRecorderTest {
         @Test
         fun getInvoiceForKnownDay() {
             effortRecorder.recordEffort(date, 2)
-            val (from, to, hours, _, amount) = effortRecorder.getInvoiceForDay(date)
+            val (from, to, hours, _, amount) = invoiceCalculator.getInvoiceForDay(date)!!
             expectThat(from).isEqualTo(date)
             expectThat(to).isEqualTo(date)
             expectThat(hours).isEqualTo(2)
@@ -43,18 +48,15 @@ internal class V1EffortRecorderTest {
         @Test
         fun getInvoiceForNegativeHous() {
             effortRecorder.recordEffort(date, -2)
-            expectCatching { effortRecorder.getInvoiceForDay(LocalDate.of(2020, 11, 8)) }
+            expectCatching { invoiceCalculator.getInvoiceForDay(LocalDate.of(2020, 11, 8)) }
                     .isFailure()
                     .isA<RuntimeException>()
         }
 
         @Test
         fun getInvoiceForUnknownDay() {
-            val (from, to, hours, _, amount) = effortRecorder.getInvoiceForDay(LocalDate.of(2020, 11, 8))
-            expectThat(from).isEqualTo(date)
-            expectThat(to).isEqualTo(date)
-            expectThat(hours).isEqualTo(0)
-            expectThat(amount).isEqualTo(0.0)
+            val invoice = invoiceCalculator.getInvoiceForDay(LocalDate.of(2020, 11, 8))
+            expectThat(invoice).isNull()
         }
 
     }
@@ -68,7 +70,7 @@ internal class V1EffortRecorderTest {
 
     @Test
     fun calculateAmountToInvoice() {
-        val invoice = effortRecorder.calculateAmount(2)
+        val invoice = invoiceCalculator.calculateAmount(2)
         expectThat(invoice).isEqualTo(11.6)
     }
 

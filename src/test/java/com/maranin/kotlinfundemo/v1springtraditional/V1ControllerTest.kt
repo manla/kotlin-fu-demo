@@ -1,5 +1,6 @@
 package com.maranin.kotlinfundemo.v1springtraditional
 
+import com.maranin.kotlinfundemo.shared.BaseController
 import com.maranin.kotlinfundemo.shared.Invoice
 import com.maranin.kotlinfundemo.shared.InvoiceError
 import org.junit.jupiter.api.BeforeEach
@@ -16,6 +17,9 @@ import java.time.LocalDate
 internal class V1ControllerTest {
 
     @Autowired
+    lateinit var baseController: BaseController
+
+    @Autowired
     lateinit var controller: V1Controller
 
 
@@ -24,12 +28,12 @@ internal class V1ControllerTest {
 
     @BeforeEach
     fun clearEntries() {
-        controller.deleteEfforts()
+        baseController.deleteEfforts()
     }
 
     @Test
     fun recordEffort() {
-        val (d, numberOfHours) = controller.recordEffort(dateString, 2)
+        val (d, numberOfHours) = baseController.recordEffort(dateString, 2)
         expectThat(d).isEqualTo(date)
         expectThat(numberOfHours).isEqualTo(2)
     }
@@ -39,7 +43,7 @@ internal class V1ControllerTest {
 
         @Test
         fun getInvoiceForKnownDay() {
-            controller.recordEffort(dateString, 2)
+            baseController.recordEffort(dateString, 2)
             val invoiceObject = controller.getInvoiceForDay(dateString)
             expectThat(invoiceObject).isA<Invoice>()
             val invoice = invoiceObject as Invoice
@@ -51,7 +55,7 @@ internal class V1ControllerTest {
 
         @Test
         fun getInvoiceFornegativeHours() {
-            controller.recordEffort(dateString, -2)
+            baseController.recordEffort(dateString, -2)
             val invoiceObject = controller.getInvoiceForDay(dateString)
             expectThat(invoiceObject).isA<InvoiceError>()
         }
@@ -59,12 +63,7 @@ internal class V1ControllerTest {
         @Test
         fun getInvoiceForUnknownDay() {
             val invoiceObject = controller.getInvoiceForDay(dateString)
-            expectThat(invoiceObject).isA<Invoice>()
-            val invoice = invoiceObject as Invoice
-            expectThat(invoice.from).isEqualTo(date)
-            expectThat(invoice.to).isEqualTo(date)
-            expectThat(invoice.hours).isEqualTo(0)
-            expectThat(invoice.amount).isEqualTo(0.0)
+            expectThat(invoiceObject).isA<String>()
         }
 
     }
