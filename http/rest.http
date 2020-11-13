@@ -3,3 +3,6 @@ POST http://localhost:8080/v1/efforts/2020-11-07?hours=7
 
 ### Retrieve the amount to invoice for a given day
 GET http://localhost:8080/v1/invoices/2020-11-07
+
+### Clear recorded efforts
+DELETE http://localhost:8080/v1/efforts

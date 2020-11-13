@@ -18,19 +18,26 @@ class V1EffortRecorder(val dailyEffortsRepository: DailyEffortsRepository) {
     }
 
     fun getInvoiceForDay(date: LocalDate): Invoice {
-        val optionlEffort = dailyEffortsRepository.findById(date)
-        if (optionlEffort.isPresent) {
-            val effort = optionlEffort.get()
-            val amount = calculateAmountToInvoice(effort.hours)
+        val effort: DailyEffort? = dailyEffortsRepository.findByDate(date)
+        // Note the traditional null check
+        return if (effort == null)
+            Invoice(date, date, 0, hourlyWage, 0.0)
+            else
+            calculateInvoice(effort, date)
+    }
+
+    private fun calculateInvoice(effort: DailyEffort, date: LocalDate): Invoice {
+        if (effort.hours >= 0) {
+            val amount = calculateAmount(effort.hours)
             return Invoice(from = date, to = date, hours = effort.hours, hourlyWage = hourlyWage, amount = amount)
         } else {
-            throw RuntimeException("No efforts found for date $date")
+            throw java.lang.RuntimeException("A negative number of hours is not allowed!")
         }
     }
 
-    fun calculateAmountToInvoice(hours: Int) = hours * hourlyWage * 1.16
+    fun calculateAmount(hours: Int) = hours * hourlyWage * 1.16
 
-    fun clearEntries() {
+    fun deleteEfforts() {
         dailyEffortsRepository.deleteAll()
     }
 

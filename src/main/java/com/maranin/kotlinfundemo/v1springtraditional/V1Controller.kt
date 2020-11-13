@@ -24,6 +24,16 @@ class V1Controller(var effortRecorder: V1EffortRecorder) {
     }
 
     /**
+     * clears recorded efforts
+     */
+    @DeleteMapping("/efforts")
+    fun deleteEfforts(): String {
+        logger.info("Delete all recorded efforts")
+        effortRecorder.deleteEfforts()
+        return "Recorded effords have been cleared"
+    }
+
+    /**
      * Indicates amount to invoice for a given day
      */
     @GetMapping("/invoices/{date}")

@@ -24,18 +24,11 @@ internal class V1EffortRecorderTest {
 
     @BeforeEach
     fun clearEntries() {
-        effortRecorder.clearEntries()
+        effortRecorder.deleteEfforts()
     }
 
     @Nested
     inner class GetInvoiceTest {
-
-        @Test
-        fun getInvoiceForUnknownDay() {
-            expectCatching { effortRecorder.getInvoiceForDay(LocalDate.of(2020, 11, 8)) }
-                    .isFailure()
-                    .isA<RuntimeException>()
-        }
 
         @Test
         fun getInvoiceForKnownDay() {
@@ -45,6 +38,23 @@ internal class V1EffortRecorderTest {
             expectThat(to).isEqualTo(date)
             expectThat(hours).isEqualTo(2)
             expectThat(amount).isEqualTo(11.6)
+        }
+
+        @Test
+        fun getInvoiceForNegativeHous() {
+            effortRecorder.recordEffort(date, -2)
+            expectCatching { effortRecorder.getInvoiceForDay(LocalDate.of(2020, 11, 8)) }
+                    .isFailure()
+                    .isA<RuntimeException>()
+        }
+
+        @Test
+        fun getInvoiceForUnknownDay() {
+            val (from, to, hours, _, amount) = effortRecorder.getInvoiceForDay(LocalDate.of(2020, 11, 8))
+            expectThat(from).isEqualTo(date)
+            expectThat(to).isEqualTo(date)
+            expectThat(hours).isEqualTo(0)
+            expectThat(amount).isEqualTo(0.0)
         }
 
     }
@@ -58,7 +68,7 @@ internal class V1EffortRecorderTest {
 
     @Test
     fun calculateAmountToInvoice() {
-        val invoice = effortRecorder.calculateAmountToInvoice(2)
+        val invoice = effortRecorder.calculateAmount(2)
         expectThat(invoice).isEqualTo(11.6)
     }
 

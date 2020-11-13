@@ -18,16 +18,13 @@ internal class V1ControllerTest {
     @Autowired
     lateinit var controller: V1Controller
 
-    @Autowired
-    lateinit var effortRecorder: V1EffortRecorder
-
 
     private val date = LocalDate.of(2020, 11, 8)
     private val dateString = "2020-11-08"
 
     @BeforeEach
     fun clearEntries() {
-        effortRecorder.clearEntries()
+        controller.deleteEfforts()
     }
 
     @Test
@@ -41,12 +38,6 @@ internal class V1ControllerTest {
     inner class GetInvoice {
 
         @Test
-        fun getInvoiceForUnknownDay() {
-            val invoiceObject = controller.getInvoiceForDay(dateString)
-            expectThat(invoiceObject).isA<InvoiceError>()
-        }
-
-        @Test
         fun getInvoiceForKnownDay() {
             controller.recordEffort(dateString, 2)
             val invoiceObject = controller.getInvoiceForDay(dateString)
@@ -56,6 +47,24 @@ internal class V1ControllerTest {
             expectThat(invoice.to).isEqualTo(date)
             expectThat(invoice.hours).isEqualTo(2)
             expectThat(invoice.amount).isEqualTo(11.6)
+        }
+
+        @Test
+        fun getInvoiceFornegativeHours() {
+            controller.recordEffort(dateString, -2)
+            val invoiceObject = controller.getInvoiceForDay(dateString)
+            expectThat(invoiceObject).isA<InvoiceError>()
+        }
+
+        @Test
+        fun getInvoiceForUnknownDay() {
+            val invoiceObject = controller.getInvoiceForDay(dateString)
+            expectThat(invoiceObject).isA<Invoice>()
+            val invoice = invoiceObject as Invoice
+            expectThat(invoice.from).isEqualTo(date)
+            expectThat(invoice.to).isEqualTo(date)
+            expectThat(invoice.hours).isEqualTo(0)
+            expectThat(invoice.amount).isEqualTo(0.0)
         }
 
     }
