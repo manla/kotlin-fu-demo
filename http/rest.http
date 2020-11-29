@@ -10,3 +10,6 @@ GET http://localhost:8080/v1/invoices/2020-11-07
 
 ### Retrieve the amount to invoice for a given day, with arrow option
 GET http://localhost:8080/v2/invoices/2020-11-07
+
+### Retrieve the amount to invoice for a given day, with exceptions eliminated
+GET http://localhost:8080/v3/invoices/2020-11-07

@@ -22,12 +22,15 @@ Andererseits ist es so einfach wie möglich gehalten, um die hier wichtigen Aspe
 
 ### Object Oriented Implementation with Spring and JDBC
 Entry point is class [V1Controller](src/main/kotlin/com/maranin/kotlinfundemo/v1springtraditional/V1Controller.kt).
-The implementation is object oriented.
+The implementation is object oriented. 
+It deals with aspects typical in object oriented programming like nullable values and exceptions.
 
- ### Replace Nullable Values with Options
+### Replace Nullable Values with Options
 Entry point is class [V2Controller](src/main/kotlin/com/maranin/kotlinfundemo/v2option/V2Controller.kt).
 Nullable values are replaced with Arrow's data type Option.
 While the use of Option is generally a popular functional programming pattern, it competes in Kotlin with the explicit handling 
 of nullable and non-nulable values with *?*. The Arrow team seems to accept the use of the Kotlin idioms. 
 So the use of Option is not recommended but deprecated. 
  
+### Eliminate Exceptions
+Entry point is class [V3Controller](src/main/kotlin/com/maranin/kotlinfundemo/v3noex/V3Controller.kt).

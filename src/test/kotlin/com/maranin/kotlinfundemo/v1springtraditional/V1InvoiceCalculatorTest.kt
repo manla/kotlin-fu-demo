@@ -46,7 +46,7 @@ internal class V1EffortRecorderTest {
         }
 
         @Test
-        fun getInvoiceForNegativeHous() {
+        fun getInvoiceForNegativeHours() {
             effortRecorder.recordEffort(date, -2)
             expectCatching { invoiceCalculator.getInvoiceForDay(LocalDate.of(2020, 11, 8)) }
                     .isFailure()

@@ -14,11 +14,8 @@ class V1InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
     fun getInvoiceForDay(date: LocalDate): Invoice? {
         // Note the return value might be null
         val effort: DailyEffort? = dailyEffortsRepository.findByDate(date)
-        // Note the null check
-        return if (effort == null)
-            null
-            else
-            calculateInvoice(effort, date)
+        // Note the implicit null handling of let
+        return effort?.let { calculateInvoice(it, date) }
     }
 
     private fun calculateInvoice(effort: DailyEffort, date: LocalDate): Invoice {
