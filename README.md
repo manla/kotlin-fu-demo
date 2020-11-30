@@ -15,22 +15,31 @@ we have the possibility to
 
 Example queries can be found in file [rest.http](http/rest.http).
 
-Das Beispiel versucht einerseits, Aspekte einer typischen Backend-Anwendung abzubilden (Controller, Geschäftslogik und Persistenz).
-Andererseits ist es so einfach wie möglich gehalten, um die hier wichtigen Aspekte hervorzuheben.
+The example covers typical aspects of an enterprise application as simple as possible.
+* Controller
+* Business logic 
+* Persistence
+* Handling of null values
+* Exceptions
 
 ## Implementations
 
 ### Object Oriented Implementation with Spring and JDBC
 Entry point is class [V1Controller](src/main/kotlin/com/maranin/kotlinfundemo/v1springtraditional/V1Controller.kt).
 The implementation is object oriented. 
-It deals with aspects typical in object oriented programming like nullable values and exceptions.
+It deals with aspects like nullable values and exceptions in an object oriented programming style.
 
 ### Replace Nullable Values with Options
 Entry point is class [V2Controller](src/main/kotlin/com/maranin/kotlinfundemo/v2option/V2Controller.kt).
 Nullable values are replaced with Arrow's data type Option.
-While the use of Option is generally a popular functional programming pattern, it competes in Kotlin with the explicit handling 
-of nullable and non-nulable values with *?*. The Arrow team seems to accept the use of the Kotlin idioms. 
-So the use of Option is not recommended but deprecated. 
+While the use of Option is a popular functional programming pattern in general, it competes in Kotlin 
+with the explicit handling of nullable and non-nulable values with *?*. The Arrow team seems to accept 
+the use of the Kotlin idioms. So the use of Option is not recommended but deprecated. 
  
 ### Eliminate Exceptions
 Entry point is class [V3Controller](src/main/kotlin/com/maranin/kotlinfundemo/v3noex/V3Controller.kt).
+This variant handles null values as well as exceptional cases with *Either*.
+Problematic cases are coded as subtypes of sealed class 
+[BadCalculation](src/main/kotlin/com/maranin/kotlinfundemo/v3noex/Problems.kt).
+Using sealed classes is the Kotlin way to emulate abstract data types. 
+
