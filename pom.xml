@@ -69,6 +69,11 @@
 			<version> 5.3.6.Final</version>
 		</dependency>
 		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-reflect</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
 			<groupId>io.arrow-kt</groupId>
 			<artifactId>arrow-core</artifactId>
 			<version>${arrow.version}</version>
