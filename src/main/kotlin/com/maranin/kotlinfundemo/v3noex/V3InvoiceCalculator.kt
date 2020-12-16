@@ -1,6 +1,7 @@
 package com.maranin.kotlinfundemo.v3noex
 
 import arrow.core.Either
+import arrow.core.Left
 import arrow.core.Right
 import com.maranin.kotlinfundemo.shared.DailyEffort
 import com.maranin.kotlinfundemo.shared.DailyEffortsRepository
@@ -24,10 +25,11 @@ class V3InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
         return when {
             effort.hours >= 0 -> {
                 val amount = calculateAmount(effort.hours)
+                // Note the right side of Either captures the good case
                 Right(Invoice(from = date, to = date, hours = effort.hours, hourlyWage = hourlyWage, amount = amount))
             }
-            // Note a problem is returned in case of negative hours
-            else -> Either.Left(InvalidEntry("A negative number of hours is not allowed!", effort))
+            // Note problems are communicated with the left side of Either
+            else -> Left(InvalidEntry("A negative number of hours is not allowed!", effort))
         }
     }
 
