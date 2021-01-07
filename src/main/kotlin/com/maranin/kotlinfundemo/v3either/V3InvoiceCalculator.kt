@@ -1,4 +1,4 @@
-package com.maranin.kotlinfundemo.v3noex
+package com.maranin.kotlinfundemo.v3either
 
 import arrow.core.Either
 import arrow.core.Left

@@ -8,7 +8,7 @@ object oriented way using [Spring Boot](https://spring.io/projects/spring-boot).
 implementation further implementation variants introduce aspects.
  
 ## Example Functionality
-As example application we choose a simple effort calculator with a EST interface. As functionality, 
+As example application we choose a simple effort calculator with a REST interface. As functionality, 
 we have the possibility to
 * indicate how many hours you have worked on which day
 * query how much money is to be factured for which period
@@ -37,9 +37,9 @@ with the explicit handling of nullable and non-nulable values with *?*. The Arro
 the use of the Kotlin idioms. So the use of Option is not recommended but deprecated. 
  
 ### Eliminate Exceptions
-Entry point is class [V3Controller](src/main/kotlin/com/maranin/kotlinfundemo/v3noex/V3Controller.kt).
+Entry point is class [V3Controller](src/main/kotlin/com/maranin/kotlinfundemo/v3either/V3Controller.kt).
 This variant handles null values as well as exceptional cases with *Either*.
 Problematic cases are coded as subtypes of sealed class 
-[BadCalculation](src/main/kotlin/com/maranin/kotlinfundemo/v3noex/Problems.kt).
+[BadCalculation](src/main/kotlin/com/maranin/kotlinfundemo/v3either/Problems.kt).
 Using sealed classes is the Kotlin way to emulate abstract data types. 
 
