@@ -3,16 +3,12 @@ package com.maranin.kotlinfundemo.v3either
 import arrow.core.Either
 import arrow.core.Left
 import arrow.core.Right
-import com.maranin.kotlinfundemo.shared.DailyEffort
-import com.maranin.kotlinfundemo.shared.DailyEffortsRepository
-import com.maranin.kotlinfundemo.shared.Invoice
+import com.maranin.kotlinfundemo.shared.*
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
 class V3InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
-
-    private val hourlyWage = 5
 
     fun getInvoiceForDay(date: LocalDate): Either<BadCalculation,Invoice> {
         // Note the return value might be null
@@ -24,15 +20,13 @@ class V3InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
     private fun calculateInvoice(effort: DailyEffort, date: LocalDate): Either<BadCalculation,Invoice> {
         return when {
             effort.hours >= 0 -> {
-                val amount = calculateAmount(effort.hours)
+                val (amount, wage) = effort.calculateAmount()
                 // Note the right side of Either captures the good case
-                Right(Invoice(from = date, to = date, hours = effort.hours, hourlyWage = hourlyWage, amount = amount))
+                Right(Invoice(from = date, to = date, hours = effort.hours, hourlyWage = wage, amount = amount))
             }
             // Note problems are communicated with the left side of Either
             else -> Left(InvalidEntry("A negative number of hours is not allowed!", effort))
         }
     }
-
-    fun calculateAmount(hours: Int) = hours * hourlyWage * 1.16
 
 }

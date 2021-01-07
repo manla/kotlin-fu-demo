@@ -23,8 +23,8 @@ internal class V1ControllerTest {
     lateinit var controller: V1Controller
 
 
-    private val date = LocalDate.of(2020, 11, 8)
-    private val dateString = "2020-11-08"
+    private val date = LocalDate.of(2020, 11, 9)
+    private val dateString = "2020-11-09"
 
     @BeforeEach
     fun clearEntries() {

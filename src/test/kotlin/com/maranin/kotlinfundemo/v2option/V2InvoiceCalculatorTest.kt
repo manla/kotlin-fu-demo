@@ -66,10 +66,4 @@ internal class V2InvoiceCalculatorTest {
 
     }
 
-    @Test
-    fun calculateAmountToInvoice() {
-        val invoice = invoiceCalculator.calculateAmount(2)
-        expectThat(invoice).isEqualTo(11.6)
-    }
-
 }

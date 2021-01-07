@@ -13,6 +13,8 @@ we have the possibility to
 * indicate how many hours you have worked on which day
 * query how much money is to be factured for which period
 
+The hourly wage differs depending if the efforts are provided on  working days or during the weekend.
+
 Example queries can be found in file [rest.http](http/rest.http).
 
 The example covers typical aspects of an enterprise application as simple as possible.

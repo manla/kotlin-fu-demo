@@ -1,6 +1,8 @@
 package com.maranin.kotlinfundemo.v1springtraditional
 
+import com.maranin.kotlinfundemo.shared.DailyEffort
 import com.maranin.kotlinfundemo.shared.EffortRecorder
+import com.maranin.kotlinfundemo.shared.calculateAmount
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -25,7 +27,7 @@ internal class V1EffortRecorderTest {
     @Autowired
     lateinit var invoiceCalculator: V1InvoiceCalculator
 
-    private val date = LocalDate.of(2020, 11, 8)
+    private val date = LocalDate.of(2020, 11, 9)
 
     @BeforeEach
     fun clearEntries() {
@@ -48,14 +50,14 @@ internal class V1EffortRecorderTest {
         @Test
         fun getInvoiceForNegativeHours() {
             effortRecorder.recordEffort(date, -2)
-            expectCatching { invoiceCalculator.getInvoiceForDay(LocalDate.of(2020, 11, 8)) }
+            expectCatching { invoiceCalculator.getInvoiceForDay(LocalDate.of(2020, 11, 9)) }
                     .isFailure()
                     .isA<RuntimeException>()
         }
 
         @Test
         fun getInvoiceForUnknownDay() {
-            val invoice = invoiceCalculator.getInvoiceForDay(LocalDate.of(2020, 11, 8))
+            val invoice = invoiceCalculator.getInvoiceForDay(LocalDate.of(2020, 11, 9))
             expectThat(invoice).isNull()
         }
 
@@ -69,9 +71,18 @@ internal class V1EffortRecorderTest {
     }
 
     @Test
-    fun calculateAmountToInvoice() {
-        val invoice = invoiceCalculator.calculateAmount(2)
-        expectThat(invoice).isEqualTo(11.6)
+    fun calculateAmountWorkday() {
+        val (amount, wage) = DailyEffort(LocalDate.of(2021, 1, 1), 2).calculateAmount()
+        expectThat(amount).isEqualTo(11.6)
+        expectThat(wage).isEqualTo(5)
     }
+
+    @Test
+    fun calculateAmountWeekend() {
+        val (amount, wage) = DailyEffort(LocalDate.of(2021, 1, 2), 2).calculateAmount()
+        expectThat(amount).isEqualTo(23.2)
+        expectThat(wage).isEqualTo(10)
+    }
+
 
 }
