@@ -22,10 +22,12 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
     /**
      * Indicates amount to invoice for a given day
      * Note the invoice calculation is provided wrapped in an IO monad
-     * Note a monad only describes functionality and has to be run explicitly
-     * Note the name unsafeRunSync() expresses that calculations might contain side effects
-     * Note the null case are handled by the IO monad as well as long as they provokes exceptions
-     * Note 'attempt()' generates an IO<Either<Throwable, Invoice>> to distinguish exceptions and valid results
+     * IO monads are designed to encapsulate calculations with side effects.
+     * They provide support for error handling, async execution and parallel execution.
+     * An IO monad only describes functionality. It has to be run explicitly.
+     * Function unsafeRunSync() runs the monad. The name expresses that calculations might contain side effects
+     * Null case are handled by the IO monad as well as long as they provoke exceptions
+     * Function 'attempt()' generates an IO<Either<Throwable, Invoice>> to distinguish invalid and valid results
      * Note we do _not_ follow here the convention to declare functions containing side effects as 'suspend'.
      * This is because 'suspend' generates an additional Continuation parameter which would conflict here with our Spring endpoint method.
      * A similar conflict would arise with Spring Data Repository methods
@@ -62,7 +64,5 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
      */
     private fun parseDate(dateString: String): IO<LocalDate> =
         IO { LocalDate.parse(dateString) }
-
-    // Todo: document code in Readme
 
 }
