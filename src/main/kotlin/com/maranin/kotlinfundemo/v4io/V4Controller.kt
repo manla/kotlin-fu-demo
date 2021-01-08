@@ -53,7 +53,7 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
     fun getInvoiceForDayIo(dateString: String): IO<Invoice> = IO.fx {
         logger.info("Retrieve invoice for $dateString")
         val localDate: LocalDate = !parseDate(dateString)
-        val invoice: Invoice = !invoiceCalculator.getInvoiceForDay(localDate)
+        val invoice: Invoice = !invoiceCalculator.getInvoiceForDayForComprehension(localDate)
         invoice
     }
 

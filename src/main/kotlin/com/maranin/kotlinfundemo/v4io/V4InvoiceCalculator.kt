@@ -10,15 +10,26 @@ import java.time.LocalDate
 class V4InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
 
     /**
-     * IO's for-comprehension allows an imperative style instead of working with flatMap()
-     * The '!' is a shortcut for .bind() at the end and provides an IO's content
+     * Note IO's for-comprehension allows an imperative style instead of working with flatMap()
+     * Note the
+     * Note the increase of readability grows with the number of involved monads
+     * '!' is a shortcut for .bind() at the end and provides an IO's content
      * Note there is no explicit check for null or for exceptions
      */
-    fun getInvoiceForDay(date: LocalDate): IO<Invoice> = IO.fx {
+    fun getInvoiceForDayForComprehension(date: LocalDate): IO<Invoice> = IO.fx {
         val effort: DailyEffort = !findByDateIO(date)
         val invoice: Invoice = !calculateInvoice(effort, date)
         invoice
     }
+
+    /**
+     * An alternative variant using flatMap() instead of for-comprehension is provided for illustration.
+     * The functionality is identical to that of function getInvoiceForDayForComprehension()
+     */
+    fun getInvoiceForDayFlatMap(date: LocalDate): IO<Invoice> =
+        findByDateIO(date).flatMap {
+                effort -> calculateInvoice(effort, date)
+        }
 
     /**
      * Note an IO monad is returned which handles exceptions
