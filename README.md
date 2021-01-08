@@ -38,10 +38,21 @@ While the use of Option is a popular functional programming pattern in general, 
 with the explicit handling of nullable and non-nulable values with *?*. The Arrow team seems to accept 
 the use of the Kotlin idioms. So the use of Option is not recommended but deprecated. 
  
-### Eliminate Exceptions
+### Eliminate Exceptions with Either
 Entry point is class [V3Controller](src/main/kotlin/com/maranin/kotlinfundemo/v3either/V3Controller.kt).
 This variant handles null values as well as exceptional cases with *Either*.
 Problematic cases are coded as subtypes of sealed class 
 [BadCalculation](src/main/kotlin/com/maranin/kotlinfundemo/v3either/Problems.kt).
 Using sealed classes is the Kotlin way to emulate abstract data types. 
 
+### Simplify Exception handling with IO Monad
+Entry point is class [V4Controller](src/main/kotlin/com/maranin/kotlinfundemo/v4io/V4Controller.kt).
+The error handling is simnplified by using an IO monad. 
+An IO monad can catch and handle exceptions and provides the result as an Either.
+Nice examples of IO monads can be found in 
+[Monads & Composition with Arrow Fx](https://mattmoore.io/blog/arrow-io-monad)
+and
+[Cleaner Composition with Monad Comprehensions in Arrow Fx](https://mattmoore.io/blog/arrow-io-monad-comprehensions).
+
+### Parallel processing
+A nice examplecan be found in [Parallel Processing The Functional Way with Arrow Fx](https://mattmoore.io/blog/arrow-io-parallel).

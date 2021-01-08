@@ -83,6 +83,12 @@
 			<artifactId>arrow-syntax</artifactId>
 			<version>${arrow.version}</version>
 		</dependency>
+		<!-- Provides IO monad and support for parallelism -->
+		<dependency>
+			<groupId>io.arrow-kt</groupId>
+			<artifactId>arrow-fx</artifactId>
+			<version>${arrow.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-test</artifactId>
