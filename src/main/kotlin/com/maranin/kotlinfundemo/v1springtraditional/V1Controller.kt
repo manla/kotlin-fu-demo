@@ -28,7 +28,7 @@ class V1Controller(var invoiceCalculator: V1InvoiceCalculator) {
             return invoice?: "No efforts available for $dateString"
         } catch(e: RuntimeException) {
             logger.error("An exception occured: ${e::class.java}, ${e.message}")
-            return InvoiceError(e::class.java.toString(), e.message)
+            return InvoiceError(e::class.java.simpleName, e.message)
         }
     }
 

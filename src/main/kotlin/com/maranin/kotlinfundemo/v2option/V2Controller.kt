@@ -27,7 +27,7 @@ class V2Controller(var invoiceCalculator: V2InvoiceCalculator) {
             // Note the optio check with the handy getOrElse method
             return invoiceOption.getOrElse { "No efforts available for $dateString" }
         } catch(e: RuntimeException) {
-            logger.error("An exception occured: ${e::class.java}, ${e.message}")
+            logger.error("An exception occured: ${e::class.java.simpleName}, ${e.message}")
             return InvoiceError(e::class.java.toString(), e.message)
         }
     }

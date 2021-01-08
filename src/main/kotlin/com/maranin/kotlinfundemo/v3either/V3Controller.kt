@@ -29,7 +29,7 @@ class V3Controller(var invoiceCalculator: V3InvoiceCalculator) {
         return when (result) {
             is Left -> {
                 logger.error("An exception occured: ${result.a}")
-                InvoiceError(result.a::class.java.toString(), result.a.toString())
+                InvoiceError(result.a::class.java.simpleName, result.a.toString())
             }
             is Right -> result.b
         }
