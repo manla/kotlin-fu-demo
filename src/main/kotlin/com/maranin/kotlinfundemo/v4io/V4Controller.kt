@@ -63,8 +63,6 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
     private fun parseDate(dateString: String): IO<LocalDate> =
         IO { LocalDate.parse(dateString) }
 
-    // Todo: write an example with flatMap instead of for comprehension
     // Todo: document code in Readme
-    // Todo: write tests
 
 }

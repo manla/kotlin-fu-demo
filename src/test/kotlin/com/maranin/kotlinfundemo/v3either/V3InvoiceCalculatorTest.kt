@@ -39,13 +39,13 @@ internal class V3InvoiceCalculatorTest {
             // Note the check for right
             expectThat(result.isRight()).isTrue()
             // Note the content is checked inside a map function. No difference to Option variant
-            result.map { invoice -> {
-                val (from, to, hours, _, amount) = invoice
-                expectThat(from).isEqualTo(date)
-                expectThat(to).isEqualTo(date)
-                expectThat(hours).isEqualTo(2)
-                expectThat(amount).isEqualTo(11.6)
-            } }
+            val invoice = result as Either.Right
+            val (from, to, hours, wage, amount) = invoice.b
+            expectThat(from).isEqualTo(date)
+            expectThat(to).isEqualTo(date)
+            expectThat(hours).isEqualTo(2)
+            expectThat(wage).isEqualTo(10)
+            expectThat(amount).isEqualTo(23.2)
         }
 
         @Test
