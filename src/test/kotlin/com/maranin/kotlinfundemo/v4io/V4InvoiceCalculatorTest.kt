@@ -3,7 +3,7 @@ package com.maranin.kotlinfundemo.v4io
 import arrow.core.Either
 import arrow.fx.IO
 import com.maranin.kotlinfundemo.shared.EffortRecorder
-import com.maranin.kotlinfundemo.shared.Invoice
+import com.maranin.kotlinfundemo.shared.*
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.BeforeEach

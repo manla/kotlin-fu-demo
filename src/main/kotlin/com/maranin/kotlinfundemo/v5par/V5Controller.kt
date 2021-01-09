@@ -1,4 +1,4 @@
-package com.maranin.kotlinfundemo.v4io
+package com.maranin.kotlinfundemo.v5par
 
 import arrow.core.Either
 import arrow.core.Either.Left
@@ -14,16 +14,18 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestController()
-@RequestMapping("/v4")
-class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
+@RequestMapping("/v5")
+class V5Controller(var invoiceCalculator: V5InvoiceCalculator) {
 
-    private val logger: Logger = LoggerFactory.getLogger(V4Controller::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(V5Controller::class.java)
+
+    // Todo: Adjust doc
 
     /**
      * Indicates amount to invoice for a given day
-     * Note the invoice calculation is provided wrapped in an Arrow FX IO monad
+     * Note the invoice calculation is provided wrapped in an IO monad
      * IO monads are designed to encapsulate calculations with side effects.
-     * They provide support for error handling and async execution.
+     * They provide support for error handling, async execution and parallel execution.
      * An IO monad only describes functionality. It has to be run explicitly.
      * Function unsafeRunSync() runs the monad. The name expresses that calculations might contain side effects
      * Null case are handled by the IO monad as well as long as they provoke exceptions
@@ -32,9 +34,12 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
      * This is because 'suspend' generates an additional Continuation parameter which would conflict here with our Spring endpoint method.
      * A similar conflict would arise with Spring Data Repository methods
      */
-    @GetMapping("/invoices/{date}")
-    fun getInvoiceForDay(@PathVariable(value = "date") dateString: String): InvoiceResponse {
-        val invoiceForDayIo: IO<Invoice> = getInvoiceForDayIo(dateString)
+    @GetMapping("/invoices")
+    fun getInvoiceForDay(@RequestParam(value = "from") fromDateString: String,
+                         @RequestParam(value = "to") toDateString: String): InvoiceResponse {
+        // Todo: Adjust method
+        // Todo: adjust return type
+        val invoiceForDayIo: IO<Invoice> = getInvoiceForPeriodIo(fromDateString, toDateString)
         val invoiceEither: IO<Either<Throwable, Invoice>> = invoiceForDayIo.attempt()
         return invoiceEither.map {
             when (it) {
@@ -47,18 +52,22 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
         }.unsafeRunSync()
     }
 
+    // Todo: Adjust doc
     /**
      * IO's for-comprehension IO.fx allows an imperative style instead of working with flatMap()
      * The '!' is a shortcut for .bind() at the end and provides an IO's content
      * Note there is no explicit check for null or for exceptions
      */
-    fun getInvoiceForDayIo(dateString: String): IO<Invoice> = IO.fx {
-        logger.info("Retrieve invoice for $dateString")
-        val localDate: LocalDate = !parseDate(dateString)
-        val invoice: Invoice = !invoiceCalculator.getInvoiceForDayForComprehension(localDate)
+    fun getInvoiceForPeriodIo(fromDateString: String, toDateString: String): IO<Invoice> = IO.fx {
+        // Todo: Adjust method
+        logger.info("Retrieve invoice for period from $fromDateString to $toDateString")
+        val fromDate: LocalDate = !parseDate(fromDateString)
+        val toDate: LocalDate = !parseDate(toDateString)
+        val invoice: Invoice = !invoiceCalculator.getInvoiceForPeriod(fromDate, toDate)
         invoice
     }
 
+    // Todo: Reuse method
     /**
      * The parsing is wrapped into an IO monad to get error handling
      */

@@ -14,5 +14,8 @@ GET http://localhost:8080/v2/invoices/2020-11-07
 ### Retrieve the amount to invoice for a given day, with exceptions eliminated
 GET http://localhost:8080/v3/invoices/2020-11-07
 
-### Retrieve the amount to invoice for a given day, with exceptions eliminated
+### Retrieve the amount to invoice for a given day, using IO monads
 GET http://localhost:8080/v4/invoices/2020-11-07
+
+### Retrieve the amount to invoice for a period between two given days, using Arrow FX's parallelism
+GET http://localhost:8080/v5/invoices?from=2020-11-01&to=2020-11-30

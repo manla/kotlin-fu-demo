@@ -1,4 +1,4 @@
-package com.maranin.kotlinfundemo.v4io
+package com.maranin.kotlinfundemo.shared
 
 import java.lang.RuntimeException
 
