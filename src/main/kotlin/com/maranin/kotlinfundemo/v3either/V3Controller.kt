@@ -3,7 +3,7 @@ package com.maranin.kotlinfundemo.v3either
 import arrow.core.Either
 import arrow.core.Either.Left
 import arrow.core.Either.Right
-import com.maranin.kotlinfundemo.shared.Invoice
+import com.maranin.kotlinfundemo.shared.InvoiceDay
 import com.maranin.kotlinfundemo.shared.InvoiceError
 import com.maranin.kotlinfundemo.shared.InvoiceResponse
 import org.slf4j.Logger
@@ -24,7 +24,7 @@ class V3Controller(var invoiceCalculator: V3InvoiceCalculator) {
     fun getInvoiceForDay(@PathVariable(value = "date") dateString: String): InvoiceResponse {
         logger.info("Retrieve invoice for $dateString")
         val localDate: LocalDate = LocalDate.parse(dateString)
-        val result: Either<BadCalculation,Invoice> = invoiceCalculator.getInvoiceForDay(localDate)
+        val result: Either<BadCalculation,InvoiceDay> = invoiceCalculator.getInvoiceForDay(localDate)
         // Note the null case is modelled as a problem as well, so all cases are handled with Either
         return when (result) {
             is Left -> {

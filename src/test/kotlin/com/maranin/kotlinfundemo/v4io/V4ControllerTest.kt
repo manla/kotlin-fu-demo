@@ -1,7 +1,7 @@
 package com.maranin.kotlinfundemo.v4io
 
 import com.maranin.kotlinfundemo.shared.BaseController
-import com.maranin.kotlinfundemo.shared.Invoice
+import com.maranin.kotlinfundemo.shared.InvoiceDay
 import com.maranin.kotlinfundemo.shared.InvoiceError
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -45,10 +45,9 @@ internal class V4ControllerTest {
         fun getInvoiceForKnownDay() {
             baseController.recordEffort(dateString, 2)
             val invoiceObject = controller.getInvoiceForDay(dateString)
-            expectThat(invoiceObject).isA<Invoice>()
-            val invoice = invoiceObject as Invoice
-            expectThat(invoice.from).isEqualTo(date)
-            expectThat(invoice.to).isEqualTo(date)
+            expectThat(invoiceObject).isA<InvoiceDay>()
+            val invoice = invoiceObject as InvoiceDay
+            expectThat(invoice.date).isEqualTo(date)
             expectThat(invoice.hours).isEqualTo(2)
             expectThat(invoice.hourlyWage).isEqualTo(5)
             expectThat(invoice.amount).isEqualTo(11.6)

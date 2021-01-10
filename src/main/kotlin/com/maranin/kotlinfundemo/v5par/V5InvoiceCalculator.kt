@@ -14,13 +14,13 @@ class V5InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
     private val logger: Logger = LoggerFactory.getLogger(V5InvoiceCalculator::class.java)
 
     // Todo: document method
-    fun getInvoiceForPeriod(fromDate: LocalDate, toDate: LocalDate): IO<Invoice> {
+    fun getInvoiceForPeriod(fromDate: LocalDate, toDate: LocalDate): IO<InvoicePeriod> {
         val dates: List<LocalDate> = dateListFromTo(fromDate, toDate)
         return IO.fx {
-            val invoices: List<Invoice> = !dates.parTraverse {
+            val invoices: List<InvoiceDay> = !dates.parTraverse {
                 getInvoiceForDay(it)
             }
-            sumUp(invoices)
+            sumUp(fromDate, toDate, invoices)
         }
     }
 
@@ -33,11 +33,11 @@ class V5InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
      * Note there is no explicit check for null or for exceptions
      */
     // Todo: Adjust or reuse method
-    fun getInvoiceForDay(date: LocalDate): IO<Invoice> {
+    fun getInvoiceForDay(date: LocalDate): IO<InvoiceDay> {
         logger.info("Get Invoice for $date with thread ${Thread.currentThread().name}")
         return IO.fx {
             val effort: DailyEffort = !findByDateIO(date)
-            val invoice: Invoice = !calculateInvoice(effort, date)
+            val invoice: InvoiceDay = !calculateInvoice(effort, date)
             invoice
         }
     }
@@ -54,11 +54,11 @@ class V5InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
      * Note an IO monad is returned which handles exceptions
      * In the case of null, an exception is provoked explicitly
      */
-    private fun calculateInvoice(effort: DailyEffort, date: LocalDate): IO<Invoice> =
+    private fun calculateInvoice(effort: DailyEffort, date: LocalDate): IO<InvoiceDay> =
         when {
             effort.hours >= 0 -> {
                 val (amount, wage) = effort.calculateAmount()
-                IO { Invoice(from = date, to = date, hours = effort.hours, hourlyWage = wage, amount = amount) }
+                IO { InvoiceDay(date = date, hours = effort.hours, hourlyWage = wage, amount = amount) }
             }
             else -> throw InvalidEntryException("A negative number of hours is not allowed! $effort")
         }
@@ -74,7 +74,7 @@ class V5InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
     }
 
     // Todo: implement function
-    fun sumUp(invoices: List<Invoice>): Invoice =
-        Invoice(LocalDate.now(), LocalDate.now(), 42, 4, 4.2)
+    fun sumUp(fromDate: LocalDate, toDate: LocalDate, invoices: List<InvoiceDay>): InvoicePeriod =
+        InvoicePeriod(fromDate, toDate, 42, 4.2, invoices)
 
 }

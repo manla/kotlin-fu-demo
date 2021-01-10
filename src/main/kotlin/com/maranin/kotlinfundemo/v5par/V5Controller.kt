@@ -5,8 +5,8 @@ import arrow.core.Either.Left
 import arrow.core.Either.Right
 import arrow.fx.IO
 import arrow.fx.extensions.fx
-import com.maranin.kotlinfundemo.shared.Invoice
 import com.maranin.kotlinfundemo.shared.InvoiceError
+import com.maranin.kotlinfundemo.shared.InvoicePeriod
 import com.maranin.kotlinfundemo.shared.InvoiceResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -39,8 +39,8 @@ class V5Controller(var invoiceCalculator: V5InvoiceCalculator) {
                          @RequestParam(value = "to") toDateString: String): InvoiceResponse {
         // Todo: Adjust method
         // Todo: adjust return type
-        val invoiceForDayIo: IO<Invoice> = getInvoiceForPeriodIo(fromDateString, toDateString)
-        val invoiceEither: IO<Either<Throwable, Invoice>> = invoiceForDayIo.attempt()
+        val invoiceForPeriodIo: IO<InvoicePeriod> = getInvoiceForPeriodIo(fromDateString, toDateString)
+        val invoiceEither: IO<Either<Throwable, InvoicePeriod>> = invoiceForPeriodIo.attempt()
         return invoiceEither.map {
             when (it) {
                 is Left -> {
@@ -58,12 +58,11 @@ class V5Controller(var invoiceCalculator: V5InvoiceCalculator) {
      * The '!' is a shortcut for .bind() at the end and provides an IO's content
      * Note there is no explicit check for null or for exceptions
      */
-    fun getInvoiceForPeriodIo(fromDateString: String, toDateString: String): IO<Invoice> = IO.fx {
-        // Todo: Adjust method
+    fun getInvoiceForPeriodIo(fromDateString: String, toDateString: String): IO<InvoicePeriod> = IO.fx {
         logger.info("Retrieve invoice for period from $fromDateString to $toDateString")
         val fromDate: LocalDate = !parseDate(fromDateString)
         val toDate: LocalDate = !parseDate(toDateString)
-        val invoice: Invoice = !invoiceCalculator.getInvoiceForPeriod(fromDate, toDate)
+        val invoice: InvoicePeriod = !invoiceCalculator.getInvoiceForPeriod(fromDate, toDate)
         invoice
     }
 

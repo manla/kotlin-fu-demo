@@ -37,13 +37,12 @@ internal class V4InvoiceCalculatorTest {
     @Test
     fun getInvoiceForCompForKnownDay() {
         effortRecorder.recordEffort(date, 2)
-        val io: IO<Invoice> = invoiceCalculator.getInvoiceForDayForComprehension(date)
+        val io: IO<InvoiceDay> = invoiceCalculator.getInvoiceForDayForComprehension(date)
         io.attempt().map {
             when (it) {
                 is Either.Right -> {
-                    val (from, to, hours, wage, amount) = it.b
-                    expectThat(from).isEqualTo(date)
-                    expectThat(to).isEqualTo(date)
+                    val (date, hours, wage, amount) = it.b
+                    expectThat(date).isEqualTo(this.date)
                     expectThat(hours).isEqualTo(2)
                     expectThat(wage).isEqualTo(10)
                     expectThat(amount).isEqualTo(23.2)
@@ -57,7 +56,7 @@ internal class V4InvoiceCalculatorTest {
 
     @Test
     fun getInvoiceForCompForUnknownKnownDay() {
-        val io: IO<Invoice> = invoiceCalculator.getInvoiceForDayForComprehension(date)
+        val io: IO<InvoiceDay> = invoiceCalculator.getInvoiceForDayForComprehension(date)
         io.attempt().map {
             when (it) {
                 is Either.Left -> {
@@ -74,13 +73,12 @@ internal class V4InvoiceCalculatorTest {
     @Test
     fun getInvoiceFlatMapForKnownDay() {
         effortRecorder.recordEffort(date, 2)
-        val io: IO<Invoice> = invoiceCalculator.getInvoiceForDayFlatMap(date)
+        val io: IO<InvoiceDay> = invoiceCalculator.getInvoiceForDayFlatMap(date)
         io.attempt().map {
             when (it) {
                 is Either.Right -> {
-                    val (from, to, hours, wage, amount) = it.b
-                    expectThat(from).isEqualTo(date)
-                    expectThat(to).isEqualTo(date)
+                    val (date, hours, wage, amount) = it.b
+                    expectThat(date).isEqualTo(this.date)
                     expectThat(hours).isEqualTo(2)
                     expectThat(wage).isEqualTo(10)
                     expectThat(amount).isEqualTo(23.2)
@@ -94,7 +92,7 @@ internal class V4InvoiceCalculatorTest {
 
     @Test
     fun getInvoiceFlatMapForUnknownKnownDay() {
-        val io: IO<Invoice> = invoiceCalculator.getInvoiceForDayFlatMap(date)
+        val io: IO<InvoiceDay> = invoiceCalculator.getInvoiceForDayFlatMap(date)
         io.attempt().map {
             when (it) {
                 is Either.Left -> {
@@ -111,7 +109,7 @@ internal class V4InvoiceCalculatorTest {
     @Test
     fun getInvoiceForNegativeHous() {
         effortRecorder.recordEffort(date, -2)
-        val io: IO<Invoice> = invoiceCalculator.getInvoiceForDayForComprehension(LocalDate.of(2020, 11, 8))
+        val io: IO<InvoiceDay> = invoiceCalculator.getInvoiceForDayForComprehension(LocalDate.of(2020, 11, 8))
         io.attempt().map {
             when (it) {
                 is Either.Left -> {

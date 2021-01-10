@@ -40,9 +40,8 @@ internal class V1EffortRecorderTest {
         @Test
         fun getInvoiceForKnownDay() {
             effortRecorder.recordEffort(date, 2)
-            val (from, to, hours, _, amount) = invoiceCalculator.getInvoiceForDay(date)!!
-            expectThat(from).isEqualTo(date)
-            expectThat(to).isEqualTo(date)
+            val (date, hours, _, amount) = invoiceCalculator.getInvoiceForDay(date)!!
+            expectThat(date).isEqualTo(this@V1EffortRecorderTest.date)
             expectThat(hours).isEqualTo(2)
             expectThat(amount).isEqualTo(11.6)
         }

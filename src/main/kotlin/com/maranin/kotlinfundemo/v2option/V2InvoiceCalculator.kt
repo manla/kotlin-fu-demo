@@ -13,7 +13,7 @@ class V2InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
      * Arrow recommends using Kotlin's language features and has deprecated arrow options.
      */
 
-    fun getInvoiceForDay(date: LocalDate): Option<Invoice> {
+    fun getInvoiceForDay(date: LocalDate): Option<InvoiceDay> {
         // Note the return value might be null
         val effortNullable: DailyEffort? = dailyEffortsRepository.findByDate(date)
         // Note the null check is handled implicitly
@@ -21,10 +21,10 @@ class V2InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
         return effortOption.map { effort -> calculateInvoice(effort, date) }
     }
 
-    private fun calculateInvoice(effort: DailyEffort, date: LocalDate): Invoice {
+    private fun calculateInvoice(effort: DailyEffort, date: LocalDate): InvoiceDay {
         if (effort.hours >= 0) {
             val (amount, wage) = effort.calculateAmount()
-            return Invoice(from = date, to = date, hours = effort.hours, hourlyWage = wage, amount = amount)
+            return InvoiceDay(date = date, hours = effort.hours, hourlyWage = wage, amount = amount)
         } else {
             // Note an exception is thrown in case of negative hours
             throw java.lang.RuntimeException("A negative number of hours is not allowed!")

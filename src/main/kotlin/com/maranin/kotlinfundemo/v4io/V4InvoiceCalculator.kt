@@ -16,9 +16,9 @@ class V4InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
      * '!' is a shortcut for .bind() at the end and provides an IO's content
      * Note there is no explicit check for null or for exceptions
      */
-    fun getInvoiceForDayForComprehension(date: LocalDate): IO<Invoice> = IO.fx {
+    fun getInvoiceForDayForComprehension(date: LocalDate): IO<InvoiceDay> = IO.fx {
         val effort: DailyEffort = !findByDateIO(date)
-        val invoice: Invoice = !calculateInvoice(effort, date)
+        val invoice: InvoiceDay = !calculateInvoice(effort, date)
         invoice
     }
 
@@ -26,7 +26,7 @@ class V4InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
      * An alternative variant using flatMap() instead of for-comprehension is provided for illustration.
      * The functionality is identical to that of function getInvoiceForDayForComprehension()
      */
-    fun getInvoiceForDayFlatMap(date: LocalDate): IO<Invoice> =
+    fun getInvoiceForDayFlatMap(date: LocalDate): IO<InvoiceDay> =
         findByDateIO(date).flatMap {
                 effort -> calculateInvoice(effort, date)
         }
@@ -42,11 +42,11 @@ class V4InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
      * Note an IO monad is returned which handles exceptions
      * In the case of null, an exception is provoked explicitly
      */
-    private fun calculateInvoice(effort: DailyEffort, date: LocalDate): IO<Invoice> =
+    private fun calculateInvoice(effort: DailyEffort, date: LocalDate): IO<InvoiceDay> =
         when {
             effort.hours >= 0 -> {
                 val (amount, wage) = effort.calculateAmount()
-                IO { Invoice(from = date, to = date, hours = effort.hours, hourlyWage = wage, amount = amount) }
+                IO { InvoiceDay(date = date, hours = effort.hours, hourlyWage = wage, amount = amount) }
             }
             else -> throw InvalidEntryException("A negative number of hours is not allowed! $effort")
         }

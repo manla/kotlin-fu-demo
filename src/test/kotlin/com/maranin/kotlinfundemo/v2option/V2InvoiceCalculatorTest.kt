@@ -3,7 +3,7 @@ package com.maranin.kotlinfundemo.v2option
 import arrow.core.Option
 import arrow.core.extensions.option.foldable.isNotEmpty
 import com.maranin.kotlinfundemo.shared.EffortRecorder
-import com.maranin.kotlinfundemo.shared.Invoice
+import com.maranin.kotlinfundemo.shared.InvoiceDay
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -37,14 +37,13 @@ internal class V2InvoiceCalculatorTest {
         @Test
         fun getInvoiceForKnownDay() {
             effortRecorder.recordEffort(date, 2)
-            val invoiceOption: Option<Invoice> = invoiceCalculator.getInvoiceForDay(date)
+            val invoiceOption: Option<InvoiceDay> = invoiceCalculator.getInvoiceForDay(date)
             // Note the check for empty
             expectThat(invoiceOption.isNotEmpty()).isTrue()
             // Note the content is checked inside a map function
             invoiceOption.map { invoice -> {
-                val (from, to, hours, _, amount) = invoice
-                expectThat(from).isEqualTo(date)
-                expectThat(to).isEqualTo(date)
+                val (date, hours, _, amount) = invoice
+                expectThat(date).isEqualTo(this@V2InvoiceCalculatorTest.date)
                 expectThat(hours).isEqualTo(2)
                 expectThat(amount).isEqualTo(11.6)
             } }
@@ -60,7 +59,7 @@ internal class V2InvoiceCalculatorTest {
 
         @Test
         fun getInvoiceForUnknownDay() {
-            val invoiceOption: Option<Invoice> = invoiceCalculator.getInvoiceForDay(LocalDate.of(2020, 11, 8))
+            val invoiceOption: Option<InvoiceDay> = invoiceCalculator.getInvoiceForDay(LocalDate.of(2020, 11, 8))
             expectThat(invoiceOption.isEmpty()).isTrue()
         }
 

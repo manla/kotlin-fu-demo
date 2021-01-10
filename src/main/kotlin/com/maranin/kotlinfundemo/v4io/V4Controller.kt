@@ -5,7 +5,7 @@ import arrow.core.Either.Left
 import arrow.core.Either.Right
 import arrow.fx.IO
 import arrow.fx.extensions.fx
-import com.maranin.kotlinfundemo.shared.Invoice
+import com.maranin.kotlinfundemo.shared.InvoiceDay
 import com.maranin.kotlinfundemo.shared.InvoiceError
 import com.maranin.kotlinfundemo.shared.InvoiceResponse
 import org.slf4j.Logger
@@ -34,8 +34,8 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
      */
     @GetMapping("/invoices/{date}")
     fun getInvoiceForDay(@PathVariable(value = "date") dateString: String): InvoiceResponse {
-        val invoiceForDayIo: IO<Invoice> = getInvoiceForDayIo(dateString)
-        val invoiceEither: IO<Either<Throwable, Invoice>> = invoiceForDayIo.attempt()
+        val invoiceForDayIo: IO<InvoiceDay> = getInvoiceForDayIo(dateString)
+        val invoiceEither: IO<Either<Throwable, InvoiceDay>> = invoiceForDayIo.attempt()
         return invoiceEither.map {
             when (it) {
                 is Left -> {
@@ -52,10 +52,10 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
      * The '!' is a shortcut for .bind() at the end and provides an IO's content
      * Note there is no explicit check for null or for exceptions
      */
-    fun getInvoiceForDayIo(dateString: String): IO<Invoice> = IO.fx {
+    fun getInvoiceForDayIo(dateString: String): IO<InvoiceDay> = IO.fx {
         logger.info("Retrieve invoice for $dateString")
         val localDate: LocalDate = !parseDate(dateString)
-        val invoice: Invoice = !invoiceCalculator.getInvoiceForDayForComprehension(localDate)
+        val invoice: InvoiceDay = !invoiceCalculator.getInvoiceForDayForComprehension(localDate)
         invoice
     }
 

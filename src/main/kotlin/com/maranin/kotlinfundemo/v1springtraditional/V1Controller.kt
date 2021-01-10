@@ -1,6 +1,6 @@
 package com.maranin.kotlinfundemo.v1springtraditional
 
-import com.maranin.kotlinfundemo.shared.Invoice
+import com.maranin.kotlinfundemo.shared.InvoiceDay
 import com.maranin.kotlinfundemo.shared.InvoiceError
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -23,7 +23,7 @@ class V1Controller(var invoiceCalculator: V1InvoiceCalculator) {
         try {
             logger.info("Retrieve invoice for $dateString")
             val localDate: LocalDate = LocalDate.parse(dateString)
-            val invoice: Invoice? = invoiceCalculator.getInvoiceForDay(localDate)
+            val invoice: InvoiceDay? = invoiceCalculator.getInvoiceForDay(localDate)
             // Note the null check with the handy Elvis operator
             return invoice?: "No efforts available for $dateString"
         } catch(e: RuntimeException) {
