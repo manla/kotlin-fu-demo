@@ -11,14 +11,13 @@ class V4InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
 
     /**
      * Note IO's for-comprehension allows an imperative style instead of working with flatMap()
-     * Note the
      * Note the increase of readability grows with the number of involved monads
      * '!' is a shortcut for .bind() at the end and provides an IO's content
      * Note there is no explicit check for null or for exceptions
      */
     fun getInvoiceForDayForComprehension(date: LocalDate): IO<InvoiceDay> = IO.fx {
         val effort: DailyEffort = !findByDateIO(date)
-        val invoice: InvoiceDay = !calculateInvoice(effort, date)
+        val invoice: InvoiceDay = !effort.calculateInvoice()
         invoice
     }
 
@@ -28,7 +27,7 @@ class V4InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
      */
     fun getInvoiceForDayFlatMap(date: LocalDate): IO<InvoiceDay> =
         findByDateIO(date).flatMap {
-                effort -> calculateInvoice(effort, date)
+                effort -> effort.calculateInvoice()
         }
 
     /**
@@ -38,17 +37,18 @@ class V4InvoiceCalculator(val dailyEffortsRepository: DailyEffortsRepository) {
     fun findByDateIO(date: LocalDate): IO<DailyEffort> =
         IO { dailyEffortsRepository.findByDate(date) ?: throw NoEntryAvailableException("No efforts available for date $date") }
 
-    /**
-     * Note an IO monad is returned which handles exceptions
-     * In the case of null, an exception is provoked explicitly
-     */
-    private fun calculateInvoice(effort: DailyEffort, date: LocalDate): IO<InvoiceDay> =
-        when {
-            effort.hours >= 0 -> {
-                val (amount, wage) = effort.calculateAmount()
-                IO { InvoiceDay(date = date, hours = effort.hours, hourlyWage = wage, amount = amount) }
-            }
-            else -> throw InvalidEntryException("A negative number of hours is not allowed! $effort")
-        }
-
 }
+
+/**
+ * Note an IO monad is returned which handles exceptions
+ * In the case of null, an exception is provoked explicitly
+ */
+fun DailyEffort.calculateInvoice(): IO<InvoiceDay> =
+    when {
+        hours >= 0 -> {
+            val (amount, wage) = calculateAmount()
+            IO { InvoiceDay(date = date, hours = hours, hourlyWage = wage, amount = amount) }
+        }
+        else -> throw InvalidEntryException("A negative number of hours is not allowed! $this")
+    }
+

@@ -1,6 +1,5 @@
 package com.maranin.kotlinfundemo.v5par
 
-import arrow.core.Either
 import arrow.core.Either.Left
 import arrow.core.Either.Right
 import arrow.fx.IO
@@ -8,6 +7,7 @@ import arrow.fx.extensions.fx
 import com.maranin.kotlinfundemo.shared.InvoiceError
 import com.maranin.kotlinfundemo.shared.InvoicePeriod
 import com.maranin.kotlinfundemo.shared.InvoiceResponse
+import com.maranin.kotlinfundemo.v4io.parseDateIo
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
@@ -19,58 +19,39 @@ class V5Controller(var invoiceCalculator: V5InvoiceCalculator) {
 
     private val logger: Logger = LoggerFactory.getLogger(V5Controller::class.java)
 
-    // Todo: Adjust doc
-
     /**
-     * Indicates amount to invoice for a given day
-     * Note the invoice calculation is provided wrapped in an IO monad
-     * IO monads are designed to encapsulate calculations with side effects.
-     * They provide support for error handling, async execution and parallel execution.
-     * An IO monad only describes functionality. It has to be run explicitly.
-     * Function unsafeRunSync() runs the monad. The name expresses that calculations might contain side effects
-     * Null case are handled by the IO monad as well as long as they provoke exceptions
-     * Function 'attempt()' generates an IO<Either<Throwable, Invoice>> to distinguish invalid and valid results
-     * Note we do _not_ follow here the convention to declare functions containing side effects as 'suspend'.
-     * This is because 'suspend' generates an additional Continuation parameter which would conflict here with our Spring endpoint method.
-     * A similar conflict would arise with Spring Data Repository methods
+     * Indicates amount to invoice for a given time period.
+     * The time period allows to illustrate parallel processing of the single days.
+     * Note the invoice calculation is provided wrapped in an IO monad again, as in variant 4.
+     * The processing of the IO is written a bit more compact here as a single expression.
      */
     @GetMapping("/invoices")
-    fun getInvoiceForDay(@RequestParam(value = "from") fromDateString: String,
-                         @RequestParam(value = "to") toDateString: String): InvoiceResponse {
-        // Todo: Adjust method
-        // Todo: adjust return type
-        val invoiceForPeriodIo: IO<InvoicePeriod> = getInvoiceForPeriodIo(fromDateString, toDateString)
-        val invoiceEither: IO<Either<Throwable, InvoicePeriod>> = invoiceForPeriodIo.attempt()
-        return invoiceEither.map {
-            when (it) {
-                is Left -> {
-                    logger.error("An exception occured: ${it.a}")
-                    InvoiceError(it.a::class.java.simpleName, it.a.message)
+    fun getInvoiceForDay(
+        @RequestParam(value = "from") fromDateString: String,
+        @RequestParam(value = "to") toDateString: String
+    ): InvoiceResponse =
+        getInvoiceForPeriodIo(fromDateString, toDateString)
+            .attempt()
+            .map {
+                when (it) {
+                    is Left -> {
+                        logger.error("An exception occured: ${it.a}")
+                        InvoiceError(it.a::class.java.simpleName, it.a.message)
+                    }
+                    is Right -> it.b
                 }
-                is Right -> it.b
-            }
-        }.unsafeRunSync()
-    }
+            }.unsafeRunSync()
 
-    // Todo: Adjust doc
+
     /**
-     * IO's for-comprehension IO.fx allows an imperative style instead of working with flatMap()
-     * The '!' is a shortcut for .bind() at the end and provides an IO's content
-     * Note there is no explicit check for null or for exceptions
+     * Provides the Invoice for the period as an IO monad
      */
     fun getInvoiceForPeriodIo(fromDateString: String, toDateString: String): IO<InvoicePeriod> = IO.fx {
         logger.info("Retrieve invoice for period from $fromDateString to $toDateString")
-        val fromDate: LocalDate = !parseDate(fromDateString)
-        val toDate: LocalDate = !parseDate(toDateString)
+        val fromDate: LocalDate = !parseDateIo(fromDateString)
+        val toDate: LocalDate = !parseDateIo(toDateString)
         val invoice: InvoicePeriod = !invoiceCalculator.getInvoiceForPeriod(fromDate, toDate)
         invoice
     }
-
-    // Todo: Reuse method
-    /**
-     * The parsing is wrapped into an IO monad to get error handling
-     */
-    private fun parseDate(dateString: String): IO<LocalDate> =
-        IO { LocalDate.parse(dateString) }
 
 }

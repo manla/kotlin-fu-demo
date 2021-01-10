@@ -36,7 +36,7 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
     fun getInvoiceForDay(@PathVariable(value = "date") dateString: String): InvoiceResponse {
         val invoiceForDayIo: IO<InvoiceDay> = getInvoiceForDayIo(dateString)
         val invoiceEither: IO<Either<Throwable, InvoiceDay>> = invoiceForDayIo.attempt()
-        return invoiceEither.map {
+        val invoiceResponse: IO<InvoiceResponse> = invoiceEither.map {
             when (it) {
                 is Left -> {
                     logger.error("An exception occured: ${it.a}")
@@ -44,7 +44,8 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
                 }
                 is Right -> it.b
             }
-        }.unsafeRunSync()
+        }
+        return invoiceResponse.unsafeRunSync()
     }
 
     /**
@@ -54,15 +55,15 @@ class V4Controller(var invoiceCalculator: V4InvoiceCalculator) {
      */
     fun getInvoiceForDayIo(dateString: String): IO<InvoiceDay> = IO.fx {
         logger.info("Retrieve invoice for $dateString")
-        val localDate: LocalDate = !parseDate(dateString)
+        val localDate: LocalDate = !parseDateIo(dateString)
         val invoice: InvoiceDay = !invoiceCalculator.getInvoiceForDayForComprehension(localDate)
         invoice
     }
 
-    /**
-     * The parsing is wrapped into an IO monad to get error handling
-     */
-    private fun parseDate(dateString: String): IO<LocalDate> =
-        IO { LocalDate.parse(dateString) }
-
 }
+
+/**
+ * The parsing is wrapped into an IO monad to get error handling
+ */
+fun parseDateIo(dateString: String): IO<LocalDate> =
+    IO { LocalDate.parse(dateString) }

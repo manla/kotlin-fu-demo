@@ -51,9 +51,9 @@ Using sealed classes is the Kotlin way to emulate abstract data types.
 
 ### Simplify Exception handling with IO Monad
 Entry point is class [V4Controller](src/main/kotlin/com/maranin/kotlinfundemo/v4io/V4Controller.kt).
-The error handling is simplified by using an IO monad. 
+The error handling is simplified by using an IO monad from Arrow FX. 
 IO monads can catch exceptions and provide results as Either, thus distinguishing errors and valid results.
-Further they provide support for async and parallel execution.
+Further they provide support for async execution.
 
 There are some peculiarities of Arrow IO monads
 * They only hold the *description* of calculation and have to be run explicitly.
@@ -74,4 +74,10 @@ and
 
 
 ### Parallel processing
-A nice examplecan be found in [Parallel Processing The Functional Way with Arrow Fx](https://mattmoore.io/blog/arrow-io-parallel).
+Entry point is class [V5Controller](src/main/kotlin/com/maranin/kotlinfundemo/v5par/V5Controller.kt).
+The example illustrates the use of parallelism with Arrow FX's function *parTraverse()* while keeping the use of IO monads.
+The example is a bit artificial. The invoice for a period of time is calculated, where the efforts for the single days 
+are accessed and calculated in parallel. 
+
+Another nice example for the use of parTraverse() can be found in 
+[Parallel Processing The Functional Way with Arrow Fx](https://mattmoore.io/blog/arrow-io-parallel).
